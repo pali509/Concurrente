@@ -1,6 +1,11 @@
 package Mensaje;
 
-public abstract class Mensaje { //raíz de la jerarquía de mensajes a diseñar
+import java.io.Serializable;
+
+public abstract class Mensaje implements Serializable{ //raíz de la jerarquía de mensajes a diseñar
+
+	private static final long serialVersionUID = 1L;//?????
+	
 	private int tipo;
 	private String origen;
 	private String destino;
@@ -22,4 +27,7 @@ public abstract class Mensaje { //raíz de la jerarquía de mensajes a diseñar
 	public String getDestino() {
 		return this.destino;
 	}
+	/*public String Texto() {
+		return " Texto default";
+	}*/
 }

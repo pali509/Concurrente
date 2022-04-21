@@ -1,37 +1,29 @@
 package main;
 import java.net.*;
 import java.util.Scanner;
+
+import oyente.OyenteClient;
+
 import java.io.*;
-public class Server implements Runnable{
+public class Server{
 	
 	private static Socket socket = null;
 	static String str = null;
 	public static void main(String[] args)throws IOException {
 
-		
-		ServerSocket ss = new ServerSocket(888);
-		socket = ss.accept();
-		
-		System.out.println("Client connected");
-		
-		InputStreamReader in = new InputStreamReader(socket.getInputStream());
-		BufferedReader bf = new BufferedReader(in);
-		
-		str = bf.readLine();
-		while(!str.equals("0")) {//Mientras que el cliente siga queriendo pedir cosas
-		
-		System.out.println("Client: " + str);
-		
-		Thread th = new Thread(new Server());
-		th.start();
-		
-		str = bf.readLine();
-		
+		while(true) {
+			ServerSocket ss = new ServerSocket(888);
+			socket = ss.accept();
+			
+			OyenteClient oc = new OyenteClient(socket);
+			oc.run();
+			
 		}
-		ss.close();
-	}
 
-	@Override
+	}
+	
+	/*
+	 @Override
 	public void run() {
 		String line;
 		PrintWriter pr = null;
@@ -63,5 +55,5 @@ public class Server implements Runnable{
 	      // Close the file.
 	      inputFile.close();
 	}
-	
+	*/
 }
