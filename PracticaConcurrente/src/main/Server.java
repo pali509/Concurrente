@@ -29,6 +29,10 @@ public class Server{
 	public static HashMap<String, List<String>> getUsersInfo() {
 		return clientsInfo;
 	}
+	public static void eliminarUser(String name) {
+		clientsInfo.remove(name);
+		
+	}
 	
 	
 	

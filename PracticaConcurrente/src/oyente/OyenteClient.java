@@ -86,9 +86,10 @@ public class OyenteClient  implements Runnable {
 			
 			break;
 		
-		case 3: //CerrarConexion
+		case 3: //CerrarConexion HECHO????
 			System.out.println("Client " + m.getOrigen() +  " sale");
-			//FALTA:"Eliminar usuario"??
+			
+			Server.eliminarUser(m.getOrigen());
 			m = new MensajeConfCerrarSesion(3, m.getOrigen(), m.getOrigen());
 			try {
 				out.writeObject(m);
