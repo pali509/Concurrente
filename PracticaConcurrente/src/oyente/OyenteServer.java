@@ -40,46 +40,32 @@ public class OyenteServer implements Runnable{
 		//Leer mensaje(Que toca hacer)
 		switch(m.getTipo()) {
 		
-		case 1: //MensajeConexion
+		case 1: //MensajeConexion HECHO??????
+			
 			System.out.println("Conectado! :)");
-			//FALTA:Mostrar info?
-			try {
-				out.writeObject(m);
-				out.flush();
-			} catch (IOException e) {
-				
-				e.printStackTrace();
-			}
-
+			
 			break;
 			
 		case 2: //ListaUsuarios
+			
 			System.out.println("Client " + m.getOrigen() +  " pide informacion");
-			//FALTA:llamar a metodo en server que devuelva la info
-			try {
-				out.writeObject(m);
-				out.flush();
-			} catch (IOException e) {
-				
-				e.printStackTrace();
-			}
-
+			//Que este trabajo valga solo un 20% es insultante
+			
 			break;
 		
 		case 3: //CerrarConexion
-			System.out.println("Client " + m.getOrigen() +  " sale");
-			//FALTA:"Eliminar usuario"??
+			
+			System.out.println("Hasta la proxima!");
 			try {
-				out.writeObject(m);
-				out.flush();
-			} catch (IOException e) {
-				
-				e.printStackTrace();
+				socket.close();
+			} catch (IOException e1) {
+				e1.printStackTrace();
 			}
+			
 
 			break;
 		
-		case 4: //PedirFichero
+		case 4: //EmitirFichero
 			System.out.println("Client " + m.getOrigen() +  " pide un fichero");
 			//FALTA:Mucho xd
 			try {
@@ -94,13 +80,6 @@ public class OyenteServer implements Runnable{
 		case 5: //ServidorCliente Preparado
 			System.out.println("Client " + m.getOrigen() +  " listo para intercambio");
 			//FALTA:Mucho xd
-			try {
-				out.writeObject(m);
-				out.flush();
-			} catch (IOException e) {
-				
-				e.printStackTrace();
-			}
 
 			break;
 			

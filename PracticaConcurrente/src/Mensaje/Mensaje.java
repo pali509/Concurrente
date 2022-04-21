@@ -1,6 +1,7 @@
 package Mensaje;
 
 import java.io.Serializable;
+import java.util.List;
 
 public abstract class Mensaje implements Serializable{ //raíz de la jerarquía de mensajes a diseñar
 
@@ -27,7 +28,7 @@ public abstract class Mensaje implements Serializable{ //raíz de la jerarquía de
 	public String getDestino() {
 		return this.destino;
 	}
-	/*public String Texto() {
-		return " Texto default";
-	}*/
+	public List<String> getRec() {
+		return null;
+	}
 }

@@ -1,5 +1,7 @@
 package main;
 import java.net.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.io.*;
 import Mensaje.*;
@@ -33,7 +35,17 @@ public class Client {
 		System.out.println("Escribe tu nombre de usuario:");
 		String name = capt.nextLine();
 		
-		Mensaje m = new MensajeConexion(1, name, name);
+		System.out.println("Escribe tus recursos(Escribe 0 cuando quieras parar o si no tienes)");
+		List<String> recursos = new ArrayList<String>();
+		String rec = capt.nextLine();
+		while(!rec.equals(0)) {
+			recursos.add(rec);
+			rec = capt.nextLine();
+		}
+		
+		User usuario = new User(name, recursos);//Que hago con esto xd
+		
+		Mensaje m = new MensajeConexion(1, name, name, recursos);
 		
 		out.writeObject(m);
 		out.flush();
@@ -42,11 +54,11 @@ public class Client {
 		
 		//Opcion
 		int option = 0;
-		System.out.println("Escribe 1 si quieres consultar información sobre usuarios,"
-				+ " 2 si quieres descargar informacion o 3 si quieres salir");
 		
 		while(option != 3) {
-
+			
+		System.out.println("Escribe 1 si quieres consultar información sobre usuarios,"
+					+ " 2 si quieres descargar informacion o 3 si quieres salir");
 		option = capt.nextInt();
 		
 		if(option == 1) { //Recibe del server toda la informacion de los usuarios

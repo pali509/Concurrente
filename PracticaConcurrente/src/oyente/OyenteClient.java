@@ -57,9 +57,10 @@ public class OyenteClient  implements Runnable {
 		//Leer mensaje(Que toca hacer)
 		switch(m.getTipo()) {
 		
-		case 1: //MensajeConexion
+		case 1: //MensajeConexion HECHO??????? 
 			System.out.println("Client " + m.getOrigen() +  " connected");
-			//FALTA:Guardar info usuario
+			
+			Server.nuevoUser(m.getOrigen(), m.getRec());
 			
 			m = new MensajeConfConexion(1, m.getOrigen(), m.getOrigen());
 			try {
@@ -71,9 +72,9 @@ public class OyenteClient  implements Runnable {
 			}
 			break;
 			
-		case 2: //ListaUsuarios
+		case 2: //ListaUsuarios 
 			System.out.println("Client " + m.getOrigen() +  " pide informacion");
-			//FALTA:llamar a metodo en server que devuelva la info
+			Server.getUsersInfo(); //Que hago yo con esto xd
 			m = new MensajeConfListaUsuarios(2, m.getOrigen(), m.getOrigen());
 			try {
 				out.writeObject(m);

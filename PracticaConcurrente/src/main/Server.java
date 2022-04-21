@@ -1,14 +1,16 @@
 package main;
 import java.net.*;
-import java.util.Scanner;
+import java.util.HashMap;
+import java.util.List;
 
 import oyente.OyenteClient;
 
 import java.io.*;
 public class Server{
-	
+	static HashMap<String, List<String>> clientsInfo = new HashMap<>();
 	private static Socket socket = null;
 	static String str = null;
+
 	public static void main(String[] args)throws IOException {
 
 		while(true) {
@@ -21,6 +23,18 @@ public class Server{
 		}
 
 	}
+	public static void nuevoUser(String name, List<String> clientInfo) {
+		clientsInfo.put(name, clientInfo);
+	}
+	public static HashMap<String, List<String>> getUsersInfo() {
+		return clientsInfo;
+	}
+	
+	
+	
+	
+	
+}
 	
 	/*
 	 @Override
@@ -56,4 +70,4 @@ public class Server{
 	      inputFile.close();
 	}
 	*/
-}
+
