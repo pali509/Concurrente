@@ -1,6 +1,7 @@
 package Mensaje;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 
 public abstract class Mensaje implements Serializable{ //raíz de la jerarquía de mensajes a diseñar
@@ -29,6 +30,9 @@ public abstract class Mensaje implements Serializable{ //raíz de la jerarquía de
 		return this.destino;
 	}
 	public List<String> getRec() {
+		return null;
+	}
+	public HashMap<String, List<String>> getMap() {
 		return null;
 	}
 }

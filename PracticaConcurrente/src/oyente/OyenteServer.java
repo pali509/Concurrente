@@ -46,14 +46,14 @@ public class OyenteServer implements Runnable{
 			
 			break;
 			
-		case 2: //ListaUsuarios
+		case 2: //ListaUsuarios HECHO??????
 			
-			System.out.println("Client " + m.getOrigen() +  " pide informacion");
-			//Que este trabajo valga solo un 20% es insultante
-			
+			System.out.println("Usuarios conectados y sus recursos:");
+			//Hay que hacer bucle para printear el mapa?????
+			System.out.println(m.getMap());
 			break;
 		
-		case 3: //CerrarConexion
+		case 3: //CerrarConexion HECHO?????
 			
 			System.out.println("Hasta la proxima!");
 			try {

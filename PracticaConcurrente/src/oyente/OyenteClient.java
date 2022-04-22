@@ -72,15 +72,14 @@ public class OyenteClient  implements Runnable {
 			}
 			break;
 			
-		case 2: //ListaUsuarios 
+		case 2: //ListaUsuarios HECHO????????
 			System.out.println("Client " + m.getOrigen() +  " pide informacion");
-			Server.getUsersInfo(); //Que hago yo con esto xd
-			m = new MensajeConfListaUsuarios(2, m.getOrigen(), m.getOrigen());
+			m = new MensajeConfListaUsuarios(2, m.getOrigen(), m.getOrigen(), Server.getUsersInfo());
+			
 			try {
 				out.writeObject(m);
 				out.flush();
 			} catch (IOException e) {
-				
 				e.printStackTrace();
 			}
 			
