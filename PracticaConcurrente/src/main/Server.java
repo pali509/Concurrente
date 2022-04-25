@@ -14,7 +14,7 @@ public class Server{
 	public static void main(String[] args)throws IOException {
 		ServerSocket ss = new ServerSocket(888);
 		
-		while(true) {	
+		while(true) {
 			socket = ss.accept();
 			OyenteClient oc = new OyenteClient(socket);
 			oc.run();

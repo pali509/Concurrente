@@ -23,17 +23,16 @@ public class OyenteServer implements Runnable{
 	public void run(){
 		Scanner inputFile = null;
 		
-		while(true) {
-		
 		//Inicializar mensaje
 		Mensaje m = null;
+		
+		while(true) {
+		
 		try {
 			m = (Mensaje) in.readObject();
 		} catch (ClassNotFoundException e) {
-			
 			e.printStackTrace();
 		} catch (IOException e) {
-			
 			e.printStackTrace();
 		}
 
