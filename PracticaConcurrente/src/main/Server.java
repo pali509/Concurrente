@@ -12,11 +12,10 @@ public class Server{
 	static String str = null;
 
 	public static void main(String[] args)throws IOException {
-
-		while(true) {
-			ServerSocket ss = new ServerSocket(888);
+		ServerSocket ss = new ServerSocket(888);
+		
+		while(true) {	
 			socket = ss.accept();
-			
 			OyenteClient oc = new OyenteClient(socket);
 			oc.run();
 			
