@@ -60,7 +60,7 @@ public class OyenteClient  implements Runnable {
 		case 1: //MensajeConexion HECHO??????? 
 			System.out.println("Client " + m.getOrigen() +  " connected");
 			
-			Server.nuevoUser(m.getOrigen(), m.getRec());
+			Server.nuevoUser(m.getOrigen(), m.getOutputS());
 			
 			m = new MensajeConfConexion(1, m.getOrigen(), m.getOrigen());
 			try {
@@ -99,37 +99,64 @@ public class OyenteClient  implements Runnable {
 			}
 			break;
 		
-		case 4: //PedirFichero
+		case 4: //PedirFichero HECHO?????????????????????????????????????????????????
 			System.out.println("Client " + m.getOrigen() +  " pide un fichero");
-			//FALTA:Mucho xd
-			m = new MensajePedirFichero(4, m.getOrigen(), m.getOrigen());
+			String client = Server.findCliente(m.getFichero(), 1);
+			String fichero = m.getFichero();
+			if(client != null) {
+				
+			ObjectOutputStream outPeer = Server.getOutStream(client);
+			
+			m = new MensajeEmitirFichero(4, m.getOrigen(), client, fichero);
+			try {
+				outPeer.writeObject(m);
+				outPeer.flush();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			}
+			
+			else
+				m = new MensajeError(6, m.getOrigen(), m.getOrigen());
 			try {
 				out.writeObject(m);
 				out.flush();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			
+			break;
+			
+		case 5: //PreparadoClienteServidor
+			System.out.println("Cliente listo para intercambio");
+
+			String cliente = Server.findCliente(m.getDestino(), 2);
+			if(cliente != null) {
+			ObjectOutputStream outPeer2 = Server.getOutStream(cliente);
+			
+			m = new MensajePrepServidorCliente(5, m.getDestino(), m.getOrigen(), m.getPuerto());
+			
+			try {
+				outPeer2.writeObject(m);
+				outPeer2.flush();
 			} catch (IOException e) {
 				
 				e.printStackTrace();
 			}
-			break;
-		case 5: //PreparadoClienteServidor
-			System.out.println("Client " + m.getOrigen() +  " listo para intercambio");
-			//FALTA:Mucho xd
-			m = new MensajePrepClienteServidor(5, m.getOrigen(), m.getOrigen());
+			}
+			else
+				m = new MensajeError(6, m.getOrigen(), m.getOrigen());
 			try {
 				out.writeObject(m);
 				out.flush();
-			} catch (IOException e) {
-				
-				e.printStackTrace();
+			} catch (IOException e1) {
+				e1.printStackTrace();
 			}
 			break;
 			
 		}
 		
 		}
-		//Cuando coño uso threads y pa que 
-		//??????????????????????????????????????????
-		//Thread th = new Thread(new Server()); 
 		
 	}
 

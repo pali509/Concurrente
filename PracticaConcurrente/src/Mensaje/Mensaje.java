@@ -1,5 +1,6 @@
 package Mensaje;
 
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +12,8 @@ public abstract class Mensaje implements Serializable{ //raíz de la jerarquía de
 	private int tipo;
 	private String origen;
 	private String destino;
+
+	
 	
 	public Mensaje (int tipo, String or, String des) {
 		this.tipo = tipo;
@@ -34,5 +37,15 @@ public abstract class Mensaje implements Serializable{ //raíz de la jerarquía de
 	}
 	public HashMap<String, List<String>> getMap() {
 		return null;
+	}
+	public String getFichero() {
+		return null;
+	}
+	public ObjectOutputStream getOutputS() {
+		return null;
+	}
+
+	public int getPuerto() {
+		return 0;
 	}
 }

@@ -45,7 +45,7 @@ public class OyenteServer implements Runnable{
 			
 			break;
 			
-		case 2: //ListaUsuarios HECHO??????
+		case 2: //ListaUsuarios 
 			
 			System.out.println("Usuarios conectados y sus recursos:");
 			//Hay que hacer bucle para printear el mapa?????
@@ -64,11 +64,14 @@ public class OyenteServer implements Runnable{
 			break;
 		
 		case 4: //EmitirFichero
-			System.out.println("Client " + m.getOrigen() +  " pide un fichero");
-			//FALTA:Mucho xd
+			System.out.println("Client " + m.getOrigen() +  " pide el fichero" + m.getFichero());
+			Emisor emisor = new Emisor(m.getFichero());
+			m = new MensajePrepClienteServidor(5, m.getDestino(), m.getOrigen(), emisor.getPuerto());
+			
 			try {
 				out.writeObject(m);
 				out.flush();
+				emisor.main(null);
 			} catch (IOException e) {
 				
 				e.printStackTrace();
@@ -76,11 +79,19 @@ public class OyenteServer implements Runnable{
 
 			break;
 		case 5: //ServidorCliente Preparado
-			System.out.println("Client " + m.getOrigen() +  " listo para intercambio");
-			//FALTA:Mucho xd
+			System.out.println("Client " + m.getDestino() +  " listo para intercambio");
+			Receptor receptor = new Receptor(m.getPuerto());
+			try {
+				receptor.main(null);
+			} catch (IOException e) {
+
+				e.printStackTrace();
+			}
 
 			break;
-			
+		case 6: //Error al encontrar file
+			System.out.println("Error al realizar el traspaso de archivos");
+			break;
 			}
 		}	
 	}

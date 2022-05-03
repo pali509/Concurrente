@@ -1,17 +1,18 @@
 package Mensaje;
 
+import java.io.ObjectOutputStream;
 import java.util.List;
 
 public class MensajeConexion extends Mensaje {
 
 	private static final long serialVersionUID = 1L;
-	List<String> recursos;
-	public MensajeConexion(int tipo, String or, String des, List<String> recursos) {
+	ObjectOutputStream out;
+	public MensajeConexion(int tipo, String or, String des, ObjectOutputStream out) {
 		super(tipo, or, des);
-		this.recursos = recursos;
+		this.out = out;
 	}
-	public List<String> getRec() {
-		return this.recursos;
+	public ObjectOutputStream getOutputS() {
+		return this.out;
 	}
 	
 }
