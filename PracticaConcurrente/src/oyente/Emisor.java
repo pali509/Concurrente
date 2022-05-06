@@ -1,17 +1,15 @@
 package oyente;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
 
 
-public class Emisor implements Runnable{
+public class Emisor extends Thread{
 
 	private static Socket socket = null;
 	static String fichero = null;
@@ -20,23 +18,17 @@ public class Emisor implements Runnable{
 		Emisor.fichero = fichero;
 	}
 
-	public void main(String[] args)throws IOException {
-
-		
-		ServerSocket ss = new ServerSocket(999);
-		socket = ss.accept();
-		
-		System.out.println("Client connected");
-		
-		Thread th = new Thread(new Emisor(fichero));
-		th.start();
-		
-		
-		ss.close();
-	}
 
 	@Override
 	public void run() {
+		ServerSocket ss = null;
+		try {
+			ss = new ServerSocket(801);
+			socket = ss.accept();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		System.out.println("Cliente Receptor connectado");
 		String line;
 		PrintWriter pr = null;
 		Scanner inputFile = null;
@@ -45,8 +37,8 @@ public class Emisor implements Runnable{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		File file = new File(fichero);
+		String nombreFile = fichero + ".txt";
+		File file = new File(nombreFile);
 		
 	    try {
 	    	inputFile = new Scanner(file);
@@ -66,10 +58,16 @@ public class Emisor implements Runnable{
 	    pr.flush();
 	      // Close the file.
 	      inputFile.close();
+	      
+	   try {
+		   	socket.close();
+			ss.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public int getPuerto() {
-		
-		return 0;
+		return 801;
 	}
 }

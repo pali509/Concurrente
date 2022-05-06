@@ -1,6 +1,8 @@
 package Mensaje;
 
-public class MensajePedirFichero extends Mensaje {
+import java.io.Serializable;
+
+public class MensajePedirFichero extends Mensaje implements Serializable{
 	String fichero;
 	public MensajePedirFichero(int tipo, String or, String des, String fichero) {
 		super(tipo, or, des);

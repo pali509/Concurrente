@@ -1,38 +1,41 @@
 package oyente;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.Scanner;
 
+import Mensaje.Mensaje;
+import Mensaje.MensajeConfCerrarSesion;
+import Mensaje.MensajeConfConexion;
+import Mensaje.MensajeConfListaUsuarios;
+import Mensaje.MensajeEmitirFichero;
+import Mensaje.MensajeError;
+import Mensaje.MensajePrepServidorCliente;
 import main.Server;
-import Mensaje.*;
 
-public class OyenteClient  implements Runnable {
-	Socket socket = null;
-
-	public OyenteClient(Socket socket) {
+public class OyenteClient  extends Thread {
+	private Socket socket = null;
+	private int cont;
+	private LockP lock;
+	private Puerto puerto;
+	public OyenteClient(Socket socket, int cont, LockP lock, Puerto puerto) {
 		this.socket = socket;
+		this.cont = cont;
+		this.lock = lock;
+		this.puerto = puerto;
 	}
+	
 	@Override
 	public void run(){
-		Scanner inputFile = null;
-		
-		while(true) {
-			
-		//Reader
 		ObjectInputStream in = null;
+		//Reader
 		try {
 			in = new ObjectInputStream(socket.getInputStream());
 		} catch (IOException e) {
 			
 			e.printStackTrace();
 		}
-		
 		//Writer
 		ObjectOutputStream out = null;
 		try {
@@ -41,9 +44,11 @@ public class OyenteClient  implements Runnable {
 			
 			e.printStackTrace();
 		}
-		
 		//Inicializar mensaje
 		Mensaje m = null;
+		boolean salir = false;
+		while(!salir) {
+		
 		try {
 			m = (Mensaje) in.readObject();
 		} catch (ClassNotFoundException e) {
@@ -60,7 +65,11 @@ public class OyenteClient  implements Runnable {
 		case 1: //MensajeConexion HECHO??????? 
 			System.out.println("Client " + m.getOrigen() +  " connected");
 			
-			Server.nuevoUser(m.getOrigen(), m.getOutputS());
+			try {
+				Server.nuevoUser(m.getOrigen(), out);
+			} catch (IOException e2) {
+				e2.printStackTrace();
+			}
 			
 			m = new MensajeConfConexion(1, m.getOrigen(), m.getOrigen());
 			try {
@@ -74,6 +83,7 @@ public class OyenteClient  implements Runnable {
 			
 		case 2: //ListaUsuarios HECHO????????
 			System.out.println("Client " + m.getOrigen() +  " pide informacion");
+			
 			m = new MensajeConfListaUsuarios(2, m.getOrigen(), m.getOrigen(), Server.getUsersInfo());
 			
 			try {
@@ -90,6 +100,7 @@ public class OyenteClient  implements Runnable {
 			
 			Server.eliminarUser(m.getOrigen());
 			m = new MensajeConfCerrarSesion(3, m.getOrigen(), m.getOrigen());
+			salir = true;
 			try {
 				out.writeObject(m);
 				out.flush();
@@ -101,7 +112,7 @@ public class OyenteClient  implements Runnable {
 		
 		case 4: //PedirFichero HECHO?????????????????????????????????????????????????
 			System.out.println("Client " + m.getOrigen() +  " pide un fichero");
-			String client = Server.findCliente(m.getFichero(), 1);
+			String client = Server.findCliente(m.getFichero(), 1, m.getOrigen());
 			String fichero = m.getFichero();
 			if(client != null) {
 				
@@ -116,7 +127,7 @@ public class OyenteClient  implements Runnable {
 			}
 			}
 			
-			else
+			else {
 				m = new MensajeError(6, m.getOrigen(), m.getOrigen());
 			try {
 				out.writeObject(m);
@@ -124,18 +135,20 @@ public class OyenteClient  implements Runnable {
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
+			}
 			
 			break;
 			
 		case 5: //PreparadoClienteServidor
 			System.out.println("Cliente listo para intercambio");
-
-			String cliente = Server.findCliente(m.getDestino(), 2);
+			
+			String cliente = Server.findCliente(m.getDestino(), 2, null);
 			if(cliente != null) {
 			ObjectOutputStream outPeer2 = Server.getOutStream(cliente);
 			
-			m = new MensajePrepServidorCliente(5, m.getDestino(), m.getOrigen(), m.getPuerto());
+			System.out.println(outPeer2);
 			
+			m = new MensajePrepServidorCliente(5, m.getDestino(), m.getOrigen(), m.getPuerto(), m.getFichero());
 			try {
 				outPeer2.writeObject(m);
 				outPeer2.flush();
@@ -144,7 +157,7 @@ public class OyenteClient  implements Runnable {
 				e.printStackTrace();
 			}
 			}
-			else
+			else {
 				m = new MensajeError(6, m.getOrigen(), m.getOrigen());
 			try {
 				out.writeObject(m);
@@ -152,6 +165,8 @@ public class OyenteClient  implements Runnable {
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
+			}
+			Server.addInfo(m.getOrigen(), m.getFichero());
 			break;
 			
 		}
