@@ -62,11 +62,15 @@ public class OyenteClient  extends Thread {
 		//Leer mensaje(Que toca hacer)
 		switch(m.getTipo()) {
 		
-		case 1: //MensajeConexion HECHO??????? 
+		case 1: //MensajeConexion:LLama a nuevoUser y manda de vuelta el mensajeConfConexion
 			System.out.println("Client " + m.getOrigen() +  " connected");
 			
 			try {
-				Server.nuevoUser(m.getOrigen(), out);
+				try {
+					Server.nuevoUser(m.getOrigen(), out);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			} catch (IOException e2) {
 				e2.printStackTrace();
 			}
@@ -81,7 +85,7 @@ public class OyenteClient  extends Thread {
 			}
 			break;
 			
-		case 2: //ListaUsuarios HECHO????????
+		case 2: //ListaUsuarios:Llama a getUsersInfo y manda de vuelva el mensaje ConfListaUsuarios
 			System.out.println("Client " + m.getOrigen() +  " pide informacion");
 			
 			m = new MensajeConfListaUsuarios(2, m.getOrigen(), m.getOrigen(), Server.getUsersInfo());
@@ -95,10 +99,14 @@ public class OyenteClient  extends Thread {
 			
 			break;
 		
-		case 3: //CerrarConexion HECHO????
+		case 3: //CerrarConexion: Llama a eliminarUser y manda de vuelta el mensaje ConfCerrarSesion
 			System.out.println("Client " + m.getOrigen() +  " sale");
 			
-			Server.eliminarUser(m.getOrigen());
+			try {
+				Server.eliminarUser(m.getOrigen());
+			} catch (InterruptedException e2) {
+				e2.printStackTrace();
+			}
 			m = new MensajeConfCerrarSesion(3, m.getOrigen(), m.getOrigen());
 			salir = true;
 			try {
@@ -110,7 +118,7 @@ public class OyenteClient  extends Thread {
 			}
 			break;
 		
-		case 4: //PedirFichero HECHO?????????????????????????????????????????????????
+		case 4: //PedirFichero : llama a getOutStream para obtener el f_out de un cliente que posea el archivo y manda desde ese f_out el mensaje EmitirFichero
 			System.out.println("Client " + m.getOrigen() +  " pide un fichero");
 			String client = Server.findCliente(m.getFichero(), 1, m.getOrigen());
 			String fichero = m.getFichero();
@@ -118,7 +126,13 @@ public class OyenteClient  extends Thread {
 				
 			ObjectOutputStream outPeer = Server.getOutStream(client);
 			
-			m = new MensajeEmitirFichero(4, m.getOrigen(), client, fichero);
+			lock.take(cont);
+			m = new MensajeEmitirFichero(4, m.getOrigen(), client, fichero, puerto);
+			
+			puerto.incrementar(); //De esta forma se asegura que el puerto sea unico para cada proceso peer to peer
+			
+			lock.release(cont);
+			
 			try {
 				outPeer.writeObject(m);
 				outPeer.flush();
@@ -128,7 +142,7 @@ public class OyenteClient  extends Thread {
 			}
 			
 			else {
-				m = new MensajeError(6, m.getOrigen(), m.getOrigen());
+				m = new MensajeError(6, m.getOrigen(), m.getOrigen()); //En caso de que nadie tenga el archivo pedido o el cliente ya lo tuviera al pedirlo
 			try {
 				out.writeObject(m);
 				out.flush();
@@ -139,14 +153,12 @@ public class OyenteClient  extends Thread {
 			
 			break;
 			
-		case 5: //PreparadoClienteServidor
+		case 5: //PreparadoClienteServidor: Obtiene el f_out de el cliente que pidio el fichero y le manda el mensaje PrepServidorCliente
 			System.out.println("Cliente listo para intercambio");
 			
 			String cliente = Server.findCliente(m.getDestino(), 2, null);
 			if(cliente != null) {
 			ObjectOutputStream outPeer2 = Server.getOutStream(cliente);
-			
-			System.out.println(outPeer2);
 			
 			m = new MensajePrepServidorCliente(5, m.getDestino(), m.getOrigen(), m.getPuerto(), m.getFichero());
 			try {
@@ -166,7 +178,15 @@ public class OyenteClient  extends Thread {
 				e1.printStackTrace();
 			}
 			}
-			Server.addInfo(m.getOrigen(), m.getFichero());
+			try {
+				try {
+					Server.addInfo(m.getOrigen(), m.getFichero()); //Añade a los ficheros de el cliente que pidio el archivo el fichero pedido 
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			break;
 			
 		}

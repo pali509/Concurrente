@@ -30,7 +30,8 @@ public class OyenteServer extends Thread{
 		//Inicializar mensaje
 		Mensaje m = null;
 		boolean salir = false;
-		while(!salir) {
+		
+		while(!salir) { //Loop principal
 		
 		try {
 			m = (Mensaje) in.readObject();
@@ -43,13 +44,13 @@ public class OyenteServer extends Thread{
 		//Leer mensaje(Que toca hacer)
 		switch(m.getTipo()) {
 		
-		case 1: //MensajeConexion HECHO??????
+		case 1: //MensajeConexion: Printea conectado y suelta el semaforo
 			
 			System.out.println("Conectado! :)");
 			sem.release();
 			break;
 			
-		case 2: //ListaUsuarios 
+		case 2: //ListaUsuarios : printea el mensaje y suelta el semaforo
 			
 			System.out.println("Usuarios conectados y sus recursos:");
 			
@@ -58,10 +59,10 @@ public class OyenteServer extends Thread{
 			sem.release();
 			break;
 		
-		case 3: //CerrarConexion HECHO?????
+		case 3: //CerrarConexion 
 			
 			System.out.println("Hasta la proxima!");
-			salir = true;
+			salir = true; //Para salir del loop
 			try {
 				socket.close();
 			} catch (IOException e1) {
@@ -70,9 +71,9 @@ public class OyenteServer extends Thread{
 			
 			break;
 		
-		case 4: //EmitirFichero
+		case 4: //EmitirFichero: Crea el emisor y manda de vuelta prepClienteServidor
 			System.out.println("Client " + m.getOrigen() +  " pide el fichero " + m.getFichero());
-			Emisor emisor = new Emisor(m.getFichero());
+			Emisor emisor = new Emisor(m.getFichero(), m.getPuerto());
 			
 			m = new MensajePrepClienteServidor(5, m.getDestino(), m.getOrigen(), emisor.getPuerto(), m.getFichero());
 			
@@ -86,19 +87,24 @@ public class OyenteServer extends Thread{
 				
 				e.printStackTrace();
 			}
-
+			
 			break;
-		case 5: //ServidorCliente Preparado
+		case 5: //ServidorClientePreparado: Crea el receptor
 			System.out.println("Client " + m.getDestino() +  " listo para intercambio");
 			Receptor receptor = new Receptor(m.getPuerto());
 			
 			receptor.start();
 			
-			sem.release();
-			
+			try {
+				receptor.join();
+				sem.release(); //Libera el semaforo
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			break;
 		case 6: //Error al encontrar file
 			System.out.println("Error al realizar el traspaso de archivos");
+			sem.release();
 			break;
 			}
 		}

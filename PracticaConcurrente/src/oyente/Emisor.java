@@ -12,18 +12,19 @@ import java.util.Scanner;
 public class Emisor extends Thread{
 
 	private static Socket socket = null;
-	static String fichero = null;
-	
-	public Emisor(String fichero) {
-		Emisor.fichero = fichero;
+	private String fichero = null;
+	private int puerto;
+	public Emisor(String fichero, int puerto) {
+		this.fichero = fichero;
+		this.puerto = puerto;
 	}
 
 
 	@Override
-	public void run() {
+	public void run() { //Crea el serverSocket, acepta al socket receptor y mediante un PrintWriter pasa linea por linea el contenido de el fichero que se pidio
 		ServerSocket ss = null;
 		try {
-			ss = new ServerSocket(801);
+			ss = new ServerSocket(puerto);
 			socket = ss.accept();
 		} catch (IOException e1) {
 			e1.printStackTrace();
@@ -60,6 +61,7 @@ public class Emisor extends Thread{
 	      inputFile.close();
 	      
 	   try {
+		   	pr.close();
 		   	socket.close();
 			ss.close();
 		} catch (IOException e) {
@@ -68,6 +70,6 @@ public class Emisor extends Thread{
 	}
 
 	public int getPuerto() {
-		return 801;
+		return puerto;
 	}
 }

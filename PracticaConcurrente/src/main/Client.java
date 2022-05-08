@@ -13,7 +13,7 @@ public class Client{
 	static ObjectOutputStream out ;
 	static ObjectInputStream in;
 	static Socket socket = null;
-	static Scanner capt = null;
+	static BufferedReader capt = null;
 	static String name = "a";
 	static Mensaje m = null;
 	static Semaphore sem;
@@ -28,12 +28,12 @@ public class Client{
 		
 		sem = new Semaphore(1);
 		
-		capt = new Scanner(System.in);
+		capt = new BufferedReader(new InputStreamReader(System.in));
 		
 		//Nombre de usuario:
 		while(name.length()< 2) {
 		System.out.println("Escribe tu nombre de usuario (Porfavor inserta un nombre mayor que un caracter):");
-		name = capt.nextLine();
+		name = capt.readLine();
 		}
 		//iniciar oyente Servidor
 		OyenteServer os = new OyenteServer(socket, in, out, sem);
@@ -53,19 +53,17 @@ public class Client{
 
 	}
 
-	public static void menu() {
+	public static void menu() throws NumberFormatException, IOException {
 		//Opcion
 		int option = 0;
 		try {
 			sem.acquire();
 		} catch (InterruptedException e) {
-
 			e.printStackTrace();
 		}
 		System.out.println("Escribe 1 si quieres consultar información sobre usuarios,"
 				+ " 2 si quieres descargar informacion o 3 si quieres salir");
-		option = capt.nextInt();
-		capt.nextLine();
+		option = Integer.parseInt(capt.readLine());
 		
 		while(option != 3) {
 			
@@ -81,7 +79,7 @@ public class Client{
 		}
 		else if(option == 2){
 			System.out.println("Que fichero quieres pedir?");
-			String fichero = capt.nextLine();
+			String fichero = capt.readLine();
 			m = new MensajePedirFichero(4, name, name, fichero);
 			try {
 				out.writeObject(m);
@@ -93,15 +91,22 @@ public class Client{
 		
 		else
 			System.out.println("Valor invalido, intenalo de nuevo");
+		
 		try {
 			sem.acquire();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		
 		System.out.println("Escribe 1 si quieres consultar información sobre usuarios,"
 				+ " 2 si quieres descargar informacion o 3 si quieres salir");
-		option = capt.nextInt();
-		capt.nextLine();
+		try {
+			option = Integer.parseInt(capt.readLine());
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		}
 		
 		if(option == 3){
@@ -116,8 +121,6 @@ public class Client{
 				e.printStackTrace();
 			}
 		}
-		
-		capt.close();
 		
 	}	
 }

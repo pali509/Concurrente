@@ -1,14 +1,13 @@
 package oyente;
 
+import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class LockP {
-	private int n;
+public class LockP implements Serializable{ //Lock para asegurar que los puertos creados en peer to peer son unicos
 	private volatile int[] turnos;
 	private volatile int sig;
 	private AtomicInteger num;
 	public LockP(int n) {
-		this.n = n;
 		turnos = new int[n+1];
 		for(int i = 0; i < n+1; i++)
 			turnos[i] = 0;

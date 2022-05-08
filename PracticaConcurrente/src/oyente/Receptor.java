@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Scanner;
 
 public class Receptor extends Thread{
 	int puerto;
@@ -13,7 +12,7 @@ public class Receptor extends Thread{
 		this.puerto = puerto;
 	}
 
-	public void run(){
+	public void run(){ //Crea el socket y mediante un bufferedReader lee lo que emisor le manda y lo printea 
 		Socket socket = null;
 		try {
 			socket = new Socket("localhost", puerto);
@@ -22,7 +21,6 @@ public class Receptor extends Thread{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		Scanner capt = new Scanner(System.in);
 		String strFile = null;
 		
 		InputStreamReader in = null;
@@ -46,9 +44,8 @@ public class Receptor extends Thread{
 				e.printStackTrace();
 			}
 		}
-		
-		capt.close();
 		try {
+			in.close();
 			socket.close();
 		} catch (IOException e) {
 			e.printStackTrace();
